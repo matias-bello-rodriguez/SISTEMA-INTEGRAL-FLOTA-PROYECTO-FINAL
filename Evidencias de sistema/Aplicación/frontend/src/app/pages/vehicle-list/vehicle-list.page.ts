@@ -21,6 +21,7 @@ import {
   eyeOutline,
   newspaperOutline,
   add,
+  closeCircleOutline,
   downloadOutline, // Importa el icono de descarga
   documentOutline, // Importa el icono de documento para PDF
 } from 'ionicons/icons';
@@ -143,6 +144,7 @@ export class VehicleListPage implements OnInit {
       carOutline,
       eyeOutline,
       newspaperOutline,
+      closeCircleOutline,
       add,
       downloadOutline, // Añade el icono de descarga
       documentOutline, // Añade el icono de documento
@@ -151,6 +153,38 @@ export class VehicleListPage implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Gestión de Vehículos');
+
+      // Reemplazar completamente los action buttons
+  this.actionButtons = [
+    {
+      icon: 'eye-outline',
+      color: 'primary',
+      tooltip: 'Ver detalles',
+      onClick: (row: Vehiculo) => this.goToViewVehicle(row.idVehi),
+    },
+    {
+      icon: 'map-outline',
+      color: 'success',
+      tooltip: 'Ver ubicación',
+      onClick: (row: Vehiculo) => this.router.navigate(['/historial-vehiculo', row.idVehi]),
+    },
+    {
+      icon: 'pencil-outline',
+      color: 'tertiary',
+      tooltip: 'Editar vehículo',
+      onClick: (row: Vehiculo) => this.goToEditVehicle(row.idVehi),
+    },
+    {
+      icon: 'close-circle-outline',
+      color: 'danger',
+      tooltip: 'Dar de baja vehículo',
+      onClick: (row: Vehiculo) =>
+        this.confirmDeleteVehicle(row.idVehi, row.patente),
+    },
+
+    // ... más botones
+  ];
+
   }
 
   ionViewWillEnter() {
@@ -302,12 +336,12 @@ export class VehicleListPage implements OnInit {
     const modal = await this.modalController.create({
       component: AlertaPersonalizadaComponent,
       componentProps: {
-        title: 'Confirmar Eliminación',
-        message: `¿Seguro que quieres eliminar el vehículo patente <strong>${patente}</strong>?`,
+        title: 'Dar de Baja',
+        message: `¿Seguro que quieres dar de baja el vehículo con patente <strong>${patente}</strong>?`,
         icon: 'warning',
         buttons: [
           { text: 'Cancelar', role: 'cancel', cssClass: 'button-cancel' },
-          { text: 'Eliminar', role: 'confirm', cssClass: 'button-danger' },
+          { text: 'Dar de baja', role: 'confirm', cssClass: 'button-danger' },
         ],
       },
       backdropDismiss: false,
@@ -323,14 +357,14 @@ export class VehicleListPage implements OnInit {
 
   private async deleteVehicle(idVehi: number) {
     const loading = await this.loadingController.create({
-      message: 'Eliminando...',
+      message: 'Cambiando estado a "inactivo"...',
     });
     await loading.present();
 
     this.apiService.deleteVehicle(idVehi).subscribe({
       next: async (res: { message: string }) => {
         await loading.dismiss();
-        this.presentToast('Vehículo eliminado exitosamente.', 'success');
+        this.presentToast('Vehículo dado de baja exitosamente.', 'success');
         this.loadVehicles(false);
       },
       error: async (error: HttpErrorResponse | Error) => {
@@ -343,8 +377,8 @@ export class VehicleListPage implements OnInit {
         const modal = await this.modalController.create({
           component: AlertaPersonalizadaComponent,
           componentProps: {
-            title: 'Error al Eliminar',
-            message: `No se pudo eliminar el vehículo. ${message}`,
+            title: 'Error al dar de baja',
+            message: `No se pudo dar de baja el vehículo. ${message}`,
             icon: 'error',
             buttons: [{ text: 'Aceptar', role: 'confirm' }],
           },

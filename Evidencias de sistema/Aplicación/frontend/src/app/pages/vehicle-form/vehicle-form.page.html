@@ -395,61 +395,6 @@
         </ion-col>
       </ion-row>
 
-      <!-- Ubicación GPS -->
-      <ion-row>
-        <ion-col size="12" size-md="6">
-          <div class="input-wrapper">
-            <ion-label>Latitud</ion-label>
-            <ion-input
-              formControlName="latitud"
-              type="number"
-              inputmode="decimal"
-              step="any"
-              placeholder="-33.12345678"
-              [readonly]="isViewMode"
-            >
-            </ion-input>
-            <div
-              *ngIf="f['latitud'].invalid && (f['latitud'].dirty || f['latitud'].touched || isSubmitted)"
-              class="error-container"
-            >
-              <div class="error-message">
-                <div
-                  *ngIf="f['latitud'].errors?.['min'] || f['latitud'].errors?.['max']"
-                >
-                  Latitud debe estar entre -90 y 90.
-                </div>
-              </div>
-            </div>
-          </div>
-        </ion-col>
-        <ion-col size="12" size-md="6">
-          <div class="input-wrapper">
-            <ion-label>Longitud</ion-label>
-            <ion-input
-              formControlName="longitud"
-              type="number"
-              inputmode="decimal"
-              step="any"
-              placeholder="-70.12345678"
-              [readonly]="isViewMode"
-            >
-            </ion-input>
-            <div
-              *ngIf="f['longitud'].invalid && (f['longitud'].dirty || f['longitud'].touched || isSubmitted)"
-              class="error-container"
-            >
-              <div class="error-message">
-                <div
-                  *ngIf="f['longitud'].errors?.['min'] || f['longitud'].errors?.['max']"
-                >
-                  Longitud debe estar entre -180 y 180.
-                </div>
-              </div>
-            </div>
-          </div>
-        </ion-col>
-      </ion-row>
     </div>
   </form>
 

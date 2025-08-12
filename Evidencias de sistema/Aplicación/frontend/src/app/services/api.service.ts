@@ -844,9 +844,9 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  deleteVehicle(id: number): Observable<{ message: string }> {
+  deleteVehicle(id: number): Observable<{ message: string; warnings?: string[] }> {
     return this.http
-      .delete<{ message: string }>(`${this.apiUrl}/vehicles/${id}`)
+      .put<{ message: string; warnings?: string[] }>(`${this.apiUrl}/vehicles/${id}/deactivate`, {})
       .pipe(catchError(this.handleError));
   }
 

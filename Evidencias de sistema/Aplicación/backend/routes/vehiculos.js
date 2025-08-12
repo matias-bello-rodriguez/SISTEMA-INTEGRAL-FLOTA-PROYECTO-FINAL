@@ -133,7 +133,7 @@ router.put('/:idVehi', async (req, res) => {
   }
 });
 
-// DELETE /api/vehicles/:idVehi - Cambia el estado del vehículo a 'inactivo' (Soft Delete)
+// DELETE /api/vehicles/:idVehi - Cambia el estado del vehículo a 'inactivo' (Soft Delete - NO elimina el registro)
 router.delete('/:idVehi', async (req, res) => {
   const t = await sequelize.transaction(); // Iniciar una transacción
   try {
@@ -152,9 +152,16 @@ router.delete('/:idVehi', async (req, res) => {
       return res.status(404).json({ message: 'Vehículo no encontrado.' });
     }
 
-    // --- VERIFICAR RELACIONES ACTIVAS ANTES DE DESACTIVAR ---
+    // Verificar si el vehículo ya está inactivo
+    if (vehiculo.estadoVehi === 'inactivo') {
+      await t.rollback();
+      return res.status(400).json({ message: 'El vehículo ya está desactivado.' });
+    }
 
-    // 1. Verificar asignaciones de recorrido activas
+    // --- VERIFICACIONES INFORMATIVAS (NO BLOQUEAN LA DESACTIVACIÓN) ---
+    const warnings = [];
+
+    // 1. Verificar asignaciones de recorrido activas (solo advertencia)
     const asignacionActiva = await AsignacionRecorrido.findOne({
       where: {
         vehiculoIdVehi: id,
@@ -163,11 +170,10 @@ router.delete('/:idVehi', async (req, res) => {
       transaction: t
     });
     if (asignacionActiva) {
-      await t.rollback();
-      return res.status(409).json({ message: 'No se puede desactivar el vehículo: Tiene asignaciones de recorrido activas.' });
+      warnings.push(`El vehículo tiene una asignación activa (ID: ${asignacionActiva.idAsig}, Estado: ${asignacionActiva.estadoAsig})`);
     }
 
-    // 2. Verificar Órdenes de Trabajo pendientes/activas
+    // 2. Verificar Órdenes de Trabajo pendientes/activas (solo advertencia)
     const otActiva = await OrdenTrabajo.findOne({
       where: {
         vehiculoIdVehi: id,
@@ -176,11 +182,10 @@ router.delete('/:idVehi', async (req, res) => {
       transaction: t
     });
     if (otActiva) {
-      await t.rollback();
-      return res.status(409).json({ message: 'No se puede desactivar el vehículo: Está involucrado en órdenes de trabajo pendientes.' });
+      warnings.push(`El vehículo tiene una orden de trabajo pendiente (ID: ${otActiva.id_ot}, Estado: ${otActiva.estado_ot})`);
     }
 
-    // 3. Verificar Siniestros pendientes/activos
+    // 3. Verificar Siniestros pendientes/activos (solo advertencia)
     const siniestroActivo = await Siniestro.findOne({
       where: {
         vehiculoId: id,
@@ -189,25 +194,142 @@ router.delete('/:idVehi', async (req, res) => {
       transaction: t
     });
     if (siniestroActivo) {
-      await t.rollback();
-      return res.status(409).json({ message: 'No se puede desactivar el vehículo: Tiene siniestros pendientes de resolución.' });
+      warnings.push(`El vehículo tiene un siniestro pendiente (ID: ${siniestroActivo.id}, Estado: ${siniestroActivo.estado})`);
     }
 
-    // --- SI NO HAY CONFLICTOS, PROCEDER A DESACTIVAR (SOFT DELETE) ---
-    await vehiculo.update({ estadoVehi: 'inactivo' }, { transaction: t });
+    // --- REALIZAR SOFT DELETE: CAMBIAR ESTADO A 'INACTIVO' (NO ELIMINAR REGISTRO) ---
+    const estadoAnterior = vehiculo.estadoVehi;
+    await vehiculo.update({ 
+      estadoVehi: 'inactivo'
+    }, { transaction: t });
 
     await t.commit();
+    
+    // Log para auditoría
+    console.log(`[SOFT DELETE] Vehículo ID ${id} (${vehiculo.patente}) cambiado de "${estadoAnterior}" a "inactivo"`);
     
     if (req.io) {
       // Emitir evento para notificar al frontend
       req.io.emit('vehicleUpdated', vehiculo.toJSON());
     }
     
-    res.status(200).json({ message: 'Vehículo desactivado exitosamente.' });
+    res.status(200).json({ 
+      message: 'Vehículo desactivado exitosamente (soft delete).',
+      warnings: warnings.length > 0 ? warnings : undefined,
+      vehiculo: {
+        id: vehiculo.idVehi,
+        patente: vehiculo.patente,
+        estadoAnterior: estadoAnterior,
+        estadoActual: 'inactivo'
+      }
+    });
 
   } catch (error) {
     await t.rollback();
-    console.error('[VehiculosRoutes - DELETE] Error al desactivar vehículo:', error);
+    console.error('[VehiculosRoutes - SOFT DELETE] Error al desactivar vehículo:', error);
+
+    if (error.name === 'SequelizeForeignKeyConstraintError') {
+      return res.status(409).json({ message: 'No se puede desactivar el vehículo: Está relacionado con otros registros activos.' });
+    }
+
+    res.status(500).json({ message: 'Error interno del servidor al desactivar el vehículo.', error: error.message });
+  }
+});
+
+// PUT /api/vehicles/:idVehi/deactivate - Cambia el estado del vehículo a 'inactivo' (Soft Delete alternativo)
+router.put('/:idVehi/deactivate', async (req, res) => {
+  const t = await sequelize.transaction(); // Iniciar una transacción
+  try {
+    const idVehiParam = req.params.idVehi;
+    const id = parseInt(idVehiParam, 10);
+
+    if (isNaN(id)) {
+      await t.rollback();
+      return res.status(400).json({ message: 'El ID del vehículo debe ser un número válido.' });
+    }
+
+    const vehiculo = await Vehiculo.findByPk(id, { transaction: t });
+
+    if (!vehiculo) {
+      await t.rollback();
+      return res.status(404).json({ message: 'Vehículo no encontrado.' });
+    }
+
+    // Verificar si el vehículo ya está inactivo
+    if (vehiculo.estadoVehi === 'inactivo') {
+      await t.rollback();
+      return res.status(400).json({ message: 'El vehículo ya está desactivado.' });
+    }
+
+    // --- VERIFICACIONES INFORMATIVAS (NO BLOQUEAN LA DESACTIVACIÓN) ---
+    const warnings = [];
+
+    // 1. Verificar asignaciones de recorrido activas (solo advertencia)
+    const asignacionActiva = await AsignacionRecorrido.findOne({
+      where: {
+        vehiculoIdVehi: id,
+        estadoAsig: { [Op.notIn]: ['completado', 'cancelado'] }
+      },
+      transaction: t
+    });
+    if (asignacionActiva) {
+      warnings.push(`El vehículo tiene una asignación activa (ID: ${asignacionActiva.idAsig}, Estado: ${asignacionActiva.estadoAsig})`);
+    }
+
+    // 2. Verificar Órdenes de Trabajo pendientes/activas (solo advertencia)
+    const otActiva = await OrdenTrabajo.findOne({
+      where: {
+        vehiculoIdVehi: id,
+        estado_ot: { [Op.notIn]: ['completada', 'cancelada', 'rechazado'] }
+      },
+      transaction: t
+    });
+    if (otActiva) {
+      warnings.push(`El vehículo tiene una orden de trabajo pendiente (ID: ${otActiva.id_ot}, Estado: ${otActiva.estado_ot})`);
+    }
+
+    // 3. Verificar Siniestros pendientes/activos (solo advertencia)
+    const siniestroActivo = await Siniestro.findOne({
+      where: {
+        vehiculoId: id,
+        estado: { [Op.notIn]: ['resuelto', 'cancelado'] }
+      },
+      transaction: t
+    });
+    if (siniestroActivo) {
+      warnings.push(`El vehículo tiene un siniestro pendiente (ID: ${siniestroActivo.id}, Estado: ${siniestroActivo.estado})`);
+    }
+
+    // --- REALIZAR SOFT DELETE: CAMBIAR ESTADO A 'INACTIVO' (NO ELIMINAR REGISTRO) ---
+    const estadoAnterior = vehiculo.estadoVehi;
+    await vehiculo.update({ 
+      estadoVehi: 'inactivo'
+    }, { transaction: t });
+
+    await t.commit();
+    
+    // Log para auditoría
+    console.log(`[SOFT DELETE PUT] Vehículo ID ${id} (${vehiculo.patente}) cambiado de "${estadoAnterior}" a "inactivo"`);
+    
+    if (req.io) {
+      // Emitir evento para notificar al frontend
+      req.io.emit('vehicleUpdated', vehiculo.toJSON());
+    }
+    
+    res.status(200).json({ 
+      message: 'Vehículo desactivado exitosamente (soft delete).',
+      warnings: warnings.length > 0 ? warnings : undefined,
+      vehiculo: {
+        id: vehiculo.idVehi,
+        patente: vehiculo.patente,
+        estadoAnterior: estadoAnterior,
+        estadoActual: 'inactivo'
+      }
+    });
+
+  } catch (error) {
+    await t.rollback();
+    console.error('[VehiculosRoutes - SOFT DELETE PUT] Error al desactivar vehículo:', error);
 
     if (error.name === 'SequelizeForeignKeyConstraintError') {
       return res.status(409).json({ message: 'No se puede desactivar el vehículo: Está relacionado con otros registros activos.' });
