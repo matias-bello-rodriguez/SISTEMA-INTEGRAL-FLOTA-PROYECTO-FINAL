@@ -24,18 +24,18 @@ Solución avanzada para la gestión logística terrestre desarrollada como proye
 ## 🛠 Stack Tecnológico
 | Componente       | Tecnologías                          |
 |------------------|--------------------------------------|
-| Frontend         | React.js + Leaflet (mapas)           |
+| Frontend         | Angular + TypeScript + Leaflet(mapas)|
 | Backend          | Node.js + Express                    |
-| Base de Datos    | MongoDB (NoSQL para datos flexibles) |
+| Base de Datos    | MySQL                                |
 | Geolocalización  | Mapbox API                           |
 | Reportes         | Chart.js + PDFKit                    |
-| Mobile           | React Native (versión cruzada)       |
+| Mobile           | Ionic/Angular (versión cruzada)      |
 
 ## 🚀 Instalación Completa
 
 ### Prerrequisitos
 - Node.js v16+
-- MongoDB 5.0+
+- MySql 8.0+
 - Yarn/npm
 - Git
 
@@ -43,7 +43,21 @@ Solución avanzada para la gestión logística terrestre desarrollada como proye
 ```bash
 git clone https://github.com/matias-bello-rodriguez/SISTEMA-INTEGRAL-FLOTA-PROYECTO-FINAL.git
 cd SISTEMA-INTEGRAL-FLOTA-PROYECTO-FINAL
+```
 
+### Paso 2: Instalar dependencias
+```bash
+# Instalar dependencias en backend
+cd ... /.../backend
+npm i
+npm run dev
+```
 
+# Instalar dependencias en frontend
+```bash
+cd ... /.../frontend
+npm i
+ionic serve
+```
 
 
