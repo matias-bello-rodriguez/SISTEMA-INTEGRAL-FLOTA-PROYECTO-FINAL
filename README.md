@@ -10,6 +10,7 @@ Solución avanzada para la gestión logística terrestre desarrollada como proye
 
 ## 📸 Capturas del Sistema
 
+<img width="1636" height="848" alt="Captura de pantalla 2025-08-12 194620" src="https://github.com/user-attachments/assets/63b1dede-4558-4f22-b6e3-7386299ef875" />
 <img width="1918" height="903" alt="Captura de pantalla 2025-08-12 193321" src="https://github.com/user-attachments/assets/ef27021c-ee6d-41e1-a31b-9d33c46c8f34" />
 <img width="436" height="826" alt="Captura de pantalla 2025-08-12 193940" src="https://github.com/user-attachments/assets/b26af6a3-58fe-4ad4-befa-18c8a4667879" />
 <img width="517" height="819" alt="Captura de pantalla 2025-08-12 193817" src="https://github.com/user-attachments/assets/f4854f0b-fbd5-4528-b9c8-4e3b2a0b3c55" />
@@ -65,6 +66,7 @@ cd ... /.../frontend
 npm i
 ionic serve
 ```
+
 
 
 
