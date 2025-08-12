@@ -452,31 +452,7 @@
       </ion-row>
     </div>
   </form>
-  <!-- Tabla de historial de mantenimiento - Solo visible en modo edición -->
-  <ion-card
-    *ngIf="(isEditMode || isViewMode) && mantenimientos.length > 0 && selectedTab !== 'mantenimiento'"
-    class="ion-margin-top"
-  >
-    <ion-card-header>
-      <ion-card-title>Historial de Mantenimiento</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <app-data-table
-        [columns]="historialColumns"
-        [data]="mantenimientos"
-        [pageSize]="5"
-        [totalItems]="mantenimientos.length"
-        [showPagination]="true"
-        [showExport]="false"
-        [showImport]="false"
-        (page)="onHistorialPageChange($event)"
-        (rowClick)="onHistorialRowClick($event)"
-        (sort)="onHistorialSortColumn($event)"
-        (export)="onHistorialExport($event)"
-      >
-      </app-data-table>
-    </ion-card-content>
-  </ion-card>
+
 
   <!-- TAB: RECORRIDOS -->
   <div *ngIf="selectedTab === 'recorridos'" class="ion-margin-top">
