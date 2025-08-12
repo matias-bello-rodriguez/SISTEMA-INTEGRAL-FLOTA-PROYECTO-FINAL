@@ -32,6 +32,7 @@ import {
   TipoCombustibleVehiculo,
 } from '../../services/api.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { VehicleCatalogService, VehicleMake, VehicleModel } from '../../services/vehicle-catalog.service';
 
 // Importamos el componente DataTable y sus interfaces
 import {
@@ -63,6 +64,7 @@ export class VehicleFormPage implements OnInit {
 
   private fb = inject(FormBuilder);
   private apiService = inject(ApiService);
+  private vehicleCatalogService = inject(VehicleCatalogService);
   private router = inject(Router); // router no se usaba activamente, pero se mantiene
   private activatedRoute = inject(ActivatedRoute);
   private loadingCtrl = inject(LoadingController);
@@ -162,6 +164,14 @@ export class VehicleFormPage implements OnInit {
   // Variables para la lista de documentos
   documentos: any[] = [];
 
+  // Variables para el catálogo de vehículos
+  marcasDisponibles: VehicleMake[] = [];
+  modelosDisponibles: VehicleModel[] = [];
+  selectedMake: string = '';
+  selectedModel: string = '';
+  loadingMarcas = false;
+  loadingModelos = false;
+
   constructor() {
     // Registramos los iconos para que Ionic los reconozca por nombre
     addIcons({ save, 'arrow-back-outline': ionArrowBackOutline, closeOutline });
@@ -179,6 +189,7 @@ export class VehicleFormPage implements OnInit {
 
     this.updatePageTitle();
     this.initForm();
+    this.loadMarcasDisponibles();
 
     // Si tenemos un ID de vehículo (ya sea del modal o de la ruta), cargar los datos
     if (this.vehicleId && (this.isEditMode || this.isViewMode)) {
@@ -197,6 +208,69 @@ export class VehicleFormPage implements OnInit {
     } else {
       this.pageTitle = 'Nuevo Vehículo';
     }
+  }
+
+  // Cargar marcas desde el servicio de catálogo
+  loadMarcasDisponibles() {
+    this.loadingMarcas = true;
+    this.vehicleCatalogService.getMakes().subscribe({
+      next: (marcas) => {
+        this.marcasDisponibles = marcas;
+        this.loadingMarcas = false;
+        console.log('Marcas cargadas:', marcas);
+      },
+      error: (error) => {
+        console.error('Error cargando marcas:', error);
+        this.loadingMarcas = false;
+      }
+    });
+  }
+
+  // Cargar modelos cuando cambia la marca
+  onMarcaChange(marca: string) {
+    console.log('Marca seleccionada:', marca);
+    this.selectedMake = marca;
+    
+    if (!marca) {
+      this.modelosDisponibles = [];
+      this.selectedModel = '';
+      this.vehicleForm.patchValue({ modelo: '' });
+      return;
+    }
+
+    this.loadingModelos = true;
+    this.vehicleCatalogService.getModelsByMake(marca).subscribe({
+      next: (modelos) => {
+        this.modelosDisponibles = modelos;
+        this.loadingModelos = false;
+        console.log('Modelos cargados para', marca, ':', modelos);
+        
+        // Limpiar selección de modelo anterior
+        this.selectedModel = '';
+        this.vehicleForm.patchValue({ modelo: '' });
+      },
+      error: (error) => {
+        console.error('Error cargando modelos:', error);
+        this.modelosDisponibles = [];
+        this.loadingModelos = false;
+      }
+    });
+  }
+
+  // Método para obtener la imagen del modelo seleccionado
+  getSelectedModelImage(): string | null {
+    const modeloSeleccionado = this.selectedModel || this.vehicleForm.get('modelo')?.value;
+    if (!modeloSeleccionado) return null;
+    
+    const modelo = this.modelosDisponibles.find(m => m.name === modeloSeleccionado);
+    return modelo?.imageUrl || null;
+  }
+
+  // Método que se ejecuta cuando cambia la selección del modelo
+  onModeloChange(modeloName: string) {
+    console.log('Modelo seleccionado:', modeloName);
+    this.selectedModel = modeloName;
+    // Forzar detección de cambios para actualizar la vista previa
   }
 
   initForm() {
