@@ -1,61 +1,43 @@
-## 🧭 Descripción General del Proyecto
+# SISTEMA INTEGRAL DE GESTIÓN DE FLOTA 🚛💨
 
-Proyecto final de carrera de ingeniería en informática, el sistema es una herramienta avanzada para la gestión de flota, con el objetivo de tener constancia en tiempo real del flujo de trabajo, y reducir costos operativos en gasolina, mantenciones preventivas,etc. El sistema fue diseñado en base a necesidades reales de trabajadores en empresas logísticas de Penco. Dado el tiempo de desarrollo, el alcance del proyecto se limitó a vehículos terrestres, mas mi intención es ampliar la solución , no tan solo en el apartado de moviles, sino también abarcando mas procesos de la cadena logística, como el almacenamiento y distribución. 
+## 🧭 Descripción General
+Solución avanzada para la gestión logística terrestre desarrollada como proyecto final de ingeniería informática. El sistema optimiza el flujo de trabajo en tiempo real, reduce costos operativos (combustible, mantenimientos) y fue diseñado basado en necesidades reales de empresas logísticas de Penco.
 
--MODULO DE REGISTRO DE COMBUSTIBLE.
--MODULO DE MANTENIMIENTO Y CREACIÓN DE OT.
--MODULO DE REGISTRO DE SINIESTRO.
--DASHBOARD CON 8 KPI'S RELEVANTES.
--SIMULACIÓN DE RUTA CON LEAFLET
+**Alcance actual**: Vehículos terrestres  
+**Roadmap futuro**: Expansión a almacenamiento y distribución logística completa
 
+## 📸 Capturas del Sistema
+![Dashboard](https://github.com/user-attachments/assets/b3f66e14-113f-4ba5-a818-2d632e8ab055)
+![Módulo móvil](https://github.com/user-attachments/assets/de955426-248e-453d-b9b7-0a31533e1e94)
+![Registro combustible](https://github.com/user-attachments/assets/dc6cba9f-dd97-417b-8c0a-b1271086f8ee)
+![Simulación ruta](https://github.com/user-attachments/assets/db4d8a21-55c6-431f-9742-d4eb39366491)
 
-https://github.com/user-attachments/assets/e2810dfd-5d02-4af0-83a1-e76f48bfe59b
+## 🔍 Módulos Principales
+- **Combustible**: Registro y análisis de consumo
+- **Mantenimiento**: Gestión de Órdenes de Trabajo (OT)
+- **Siniestros**: Registro y seguimiento de incidentes
+- **Dashboard**: 8 KPIs operacionales clave
+- **Rutas**: Simulación con tecnología Leaflet
 
-<img width="752" height="686" alt="image" src="https://github.com/user-attachments/assets/b3f66e14-113f-4ba5-a818-2d632e8ab055" />
-<img width="382" height="781" alt="image" src="https://github.com/user-attachments/assets/de955426-248e-453d-b9b7-0a31533e1e94" />
-<img width="697" height="692" alt="image" src="https://github.com/user-attachments/assets/dc6cba9f-dd97-417b-8c0a-b1271086f8ee" />
-<img width="606" height="699" alt="image" src="https://github.com/user-attachments/assets/db4d8a21-55c6-431f-9742-d4eb39366491" />
+## 🛠 Stack Tecnológico
+| Componente       | Tecnologías                          |
+|------------------|--------------------------------------|
+| Frontend         | React.js + Leaflet (mapas)           |
+| Backend          | Node.js + Express                    |
+| Base de Datos    | MongoDB (NoSQL para datos flexibles) |
+| Geolocalización  | Mapbox API                           |
+| Reportes         | Chart.js + PDFKit                    |
+| Mobile           | React Native (versión cruzada)       |
 
+## 🚀 Instalación Completa
 
+### Prerrequisitos
+- Node.js v16+
+- MongoDB 5.0+
+- Yarn/npm
+- Git
 
-
-
-## 🔧 Componentes Técnicos y Metodológicos
-
-1. **GPS y Geolocalización**  
-El sistema incorpora funcionalidades de geolocalización para el seguimiento en tiempo real de activos o usuarios. Aunque no se especifica el tipo de dispositivo GPS utilizado, es probable que se haya integrado con APIs como Google Maps o Mapbox para obtener coordenadas y mostrar rutas en un mapa.
-
-2. **Base de Datos**  
-Se ha diseñado una base de datos relacional para almacenar y gestionar la información del sistema. Aunque no se proporciona el esquema detallado, es probable que se haya utilizado MySQL o PostgreSQL, considerando las mejores prácticas en proyectos similares.
-
-3. **Backend y API**  
-El backend está desarrollado utilizando Flask, un microframework de Python. La estructura del proyecto sugiere una arquitectura basada en RESTful APIs, facilitando la comunicación entre el frontend y la base de datos.
-
-4. **Frontend y Mockups**  
-El frontend se ha diseñado con una interfaz de usuario intuitiva, probablemente utilizando tecnologías como HTML, CSS y JavaScript. Se han creado mockups para visualizar la disposición de los elementos y la interacción del usuario con el sistema.
-
-5. **BPMN (Business Process Model and Notation)**  
-Se ha utilizado BPMN para modelar los procesos de negocio del sistema. Esto permite una representación gráfica clara de los flujos de trabajo, facilitando la comprensión y comunicación entre los miembros del equipo y stakeholders.
-
-6. **KPIs (Indicadores Clave de Desempeño)**  
-Aunque no se especifican KPIs concretos en la documentación, es probable que se hayan definido indicadores para medir el rendimiento del sistema, como tiempos de respuesta, precisión en la geolocalización y eficiencia en la gestión de datos.
-
-7. **Cronograma y Gantt**  
-Se ha elaborado un cronograma detallado del proyecto, posiblemente representado mediante un diagrama de Gantt. Este cronograma incluye las fases de planificación, desarrollo, pruebas e implementación, con asignación de tareas y tiempos estimados.
-
-## ✅ Puntos Fuertes del Sistema
-
-- **Integración de GPS:** Permite el seguimiento en tiempo real, mejorando la trazabilidad y eficiencia de los procesos.  
-- **Arquitectura modular:** Facilita el mantenimiento y escalabilidad del sistema.  
-- **Uso de metodologías ágiles:** Asegura una entrega continua y adaptabilidad a cambios.  
-- **Documentación detallada:** Facilita la comprensión y replicabilidad del proyecto.  
-
-## 📈 Resultados Obtenidos
-
-Aunque no se presentan métricas cuantitativas específicas en la documentación, se espera que el sistema haya logrado:
-
-- Mejora en la eficiencia operativa: Reducción de tiempos en procesos clave.  
-- Mayor precisión en la toma de decisiones: Gracias a la información en tiempo real proporcionada por el GPS.  
-- Satisfacción del usuario: Debido a una interfaz amigable y funcionalidades útiles.
-
-  Aportes de: @LuisAriasCl y @pedrignacio
+### Paso 1: Clonar repositorio
+```bash
+git clone https://github.com/matias-bello-rodriguez/SISTEMA-INTEGRAL-FLOTA-PROYECTO-FINAL.git
+cd SISTEMA-INTEGRAL-FLOTA-PROYECTO-FINAL
