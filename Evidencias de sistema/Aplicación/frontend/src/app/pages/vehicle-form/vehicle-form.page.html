@@ -103,30 +103,14 @@
         <ion-col size="12" size-md="6">
           <div class="input-wrapper">
             <ion-label>Marca <ion-text color="danger">*</ion-text></ion-label>
-            <ion-select
-              interface="popover"
-              placeholder="Selecciona una marca"
+            <ion-input
               formControlName="marca"
-              [disabled]="isViewMode || loadingMarcas"
-              (ionChange)="onMarcaChange($event.detail.value)"
+              placeholder="Ej: Toyota"
+              type="text"
+              required
+              [readonly]="isViewMode"
             >
-              <ion-select-option *ngFor="let marca of marcasDisponibles" [value]="marca.name">
-                <div class="marca-option">
-                  <img 
-                    *ngIf="marca.logoUrl" 
-                    [src]="marca.logoUrl" 
-                    alt="{{marca.name}} logo"
-                    class="marca-logo"
-                  />
-                  <ion-icon 
-                    *ngIf="!marca.logoUrl" 
-                    name="car-outline" 
-                    class="marca-icon"
-                  ></ion-icon>
-                  <span class="marca-text">{{ marca.name }}</span>
-                </div>
-              </ion-select-option>
-            </ion-select>
+            </ion-input>
             <div class="error-container">
               <div
                 class="error-message"
@@ -139,51 +123,17 @@
             </div>
           </div>
         </ion-col>
-        
         <ion-col size="12" size-md="6">
           <div class="input-wrapper">
             <ion-label>Modelo <ion-text color="danger">*</ion-text></ion-label>
-            
-            <!-- Container con select y vista previa -->
-            <div class="modelo-container">
-              <ion-select
-                interface="popover"
-                placeholder="Selecciona un modelo"
-                formControlName="modelo"
-                [disabled]="isViewMode || !selectedMake || loadingModelos || !modelosDisponibles?.length"
-                class="modelo-select"
-              >
-                <ion-select-option *ngFor="let modelo of modelosDisponibles" [value]="modelo.name">
-                  <div class="modelo-option">
-                    <img 
-                      *ngIf="modelo.imageUrl" 
-                      [src]="modelo.imageUrl" 
-                      alt="{{modelo.name}}"
-                      class="modelo-image"
-                    />
-                    <ion-icon 
-                      *ngIf="!modelo.imageUrl" 
-                      name="car-sport-outline" 
-                      class="modelo-icon"
-                    ></ion-icon>
-                    <div class="modelo-info">
-                      <span class="modelo-name">{{ modelo.name }}</span>
-                      <small class="modelo-description" *ngIf="modelo.description">{{ modelo.description }}</small>
-                    </div>
-                  </div>
-                </ion-select-option>
-              </ion-select>
-              
-              <!-- Vista previa pequeña al lado derecho -->
-              <div class="modelo-preview-small" *ngIf="getSelectedModelImage()">
-                <img 
-                  [src]="getSelectedModelImage()" 
-                  alt="Modelo seleccionado"
-                  class="modelo-preview-image-small"
-                />
-              </div>
-            </div>
-            
+            <ion-input
+              formControlName="modelo"
+              placeholder="Ej: Hilux"
+              type="text"
+              required
+              [readonly]="isViewMode"
+            >
+            </ion-input>
             <div class="error-container">
               <div
                 class="error-message"
@@ -194,7 +144,6 @@
                 </div>
               </div>
             </div>
-            
           </div>
         </ion-col>
       </ion-row>
