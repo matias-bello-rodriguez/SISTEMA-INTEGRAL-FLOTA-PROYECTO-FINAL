@@ -1,7 +1,4 @@
 # SISTEMA INTEGRAL DE GESTIÓN DE FLOTA 🚛💨
-
-## Colaboradores: @pedrignacio & @LuisAriasCL & @matias-bello-rodriguez
-
 ## 🧭 Descripción General
 Solución avanzada para la gestión logística terrestre desarrollada como proyecto final de ingeniería informática. El sistema optimiza el flujo de trabajo en tiempo real, reduce costos operativos (combustible, mantenimientos) y fue diseñado basado en necesidades reales de empresas logísticas de Penco.
 
@@ -66,6 +63,7 @@ cd ... /.../frontend
 npm i
 ionic serve
 ```
+
 
 
 
